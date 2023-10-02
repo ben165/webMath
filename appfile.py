@@ -166,7 +166,7 @@ def taylor():
 
     out.append('<h2>Taylor example 2</h2>\n')
 
-    out.append('Taylor Approximations of <b>sin(x)</b> as position x=0\n')
+    out.append('Taylor Approximations\n')
 
     out.append('<form action="taylor" method="get">\n')
     out.append('<select id="order" name="order">\n')
