@@ -35,6 +35,15 @@ pwTable = {
 }
 
 
+def sessionValid(session):
+    try:
+        if session['username'] and ('username' in session):
+            return True
+        return False
+    except:
+        False
+
+
 def createHash(str1, user):
     try:
         hashTable[user]

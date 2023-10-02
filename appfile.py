@@ -7,8 +7,14 @@ import io
 from flask import Flask, request, session
 
 # Math Stuff
+import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
+
+# Very important for thread safety
+matplotlib.use('agg')
+
+
+import numpy
 import sympy as sp
 from sympy import symbols
 from sympy.parsing.sympy_parser import parse_expr
@@ -23,22 +29,13 @@ app.config["SESSION_TYPE"] = "filesystem"
 app.secret_key = b'DFkCwsJVaWc1YpP+SA5hSYLpRP0='
 
 
-def sessionValid():
-    try:
-        if session['username'] and ('username' in session):
-            return True
-        return False
-    except:
-        False
-
-
 @app.route("/")
 def index():
     out = []
     out.append("<h2>Welcome</h2>")
     out.append("<p>")
 
-    if not sessionValid():
+    if not hp.sessionValid(session):
         out.append('<h3>Login</h3>\n')
         out.append('<form action="doLogin" method="post">\n')
         out.append('<p>Username:<br />\n')
@@ -96,69 +93,171 @@ def doLogout():
     return hp.HEAD + 'Logout complete. Go <a href="/">back</a>.' + hp.TAIL
 
 
+# Old approach
+#@app.route("/taylor")
+#def taylor():
+#    if not hp.sessionValid(session):
+#        return hp.HEAD + 'Not logged in. Go <a href="/">back</a>' + hp.TAIL
+#
+#    out = []
+#
+#    out.append('<p><a href="/">Back</a></p>\n')
+#
+#    out.append('<h2>Taylor example</h2>\n')
+#
+#    out.append('Taylor Approximations of <b>sin(x)</b> as position x=0\n')
+#
+#    out.append('<form action="taylor" method="get">\n')
+#    out.append('<select id="order" name="order">\n')
+#    for i in range(1, 11):
+#        out.append('<option value="' + str(i) + '">' + str(i) + '</option>\n')
+#    out.append('</select></p>\n')
+#
+#    out.append('<input type="submit" value="Submit">\n')
+#    out.append('</form>\n\n')
+#
+#    try:
+#        orderNr = int(request.args.get('order', ''))
+#    except:
+#        return hp.HEAD + ''.join(out) + hp.TAIL
+#
+#    out.append("<hr>\n")
+#    out.append("Order choosen: " + str(orderNr))
+#
+#    # Plot range
+#    xmin = -4 * np.pi
+#    xmax = 4 * np.pi
+#
+#    plt.figure(figsize=(8, 6))  # figsize=(19.20,10.80)
+#    x = np.linspace(-4 * np.pi, 4 * np.pi, 200)
+#    yTaylor = np.zeros(len(x))
+#    ySin = np.sin(x)
+#
+#    # Approximation
+#    sign = -1
+#    for i in range(0, orderNr + 1):
+#        if (i % 2 == 0):
+#            continue
+#        else:
+#            sign *= -1
+#            yTaylor += sign * x ** i / np.math.factorial(i)
+#
+#    plt.plot(x, ySin, 'b', x, yTaylor, 'r')
+#    plt.axis((xmin, xmax, -4, 4))
+#    plt.grid(True)
+#
+#    # plt.show()
+#    plt.savefig("plots/" + session['username'] + '.png')
+#
+#    out.append('<img src="plot/' + session['username'] + '.png" alt="Sin Taylor">\n')
+#
+#    return hp.HEAD + ''.join(out) + hp.TAIL
+
+
+
 @app.route("/taylor")
-def plot():
-    if not sessionValid():
+def taylor():
+    if not hp.sessionValid(session):
         return hp.HEAD + 'Not logged in. Go <a href="/">back</a>' + hp.TAIL
 
     out = []
 
     out.append('<p><a href="/">Back</a></p>\n')
 
-    out.append('<h2>Taylor example</h2>\n')
+    out.append('<h2>Taylor example 2</h2>\n')
 
     out.append('Taylor Approximations of <b>sin(x)</b> as position x=0\n')
 
     out.append('<form action="taylor" method="get">\n')
     out.append('<select id="order" name="order">\n')
-    for i in range(1, 11):
-        out.append('<option value="' + str(i) + '">' + str(i) + '</option>\n')
+    for i in range(1, 16):
+        if i != 5:
+           out.append('<option value="' + str(i) + '">' + str(i) + '</option>\n')
+        else:
+            out.append('<option selected value="' + str(i) + '">' + str(i) + '</option>\n')
     out.append('</select></p>\n')
+
+    out.append('<p>Expression: \n')
+    out.append('<input type="text" value="sin(x)*cos(x)" name="expression"></p>')
+
+    out.append('<p>x0 position: \n')
+    out.append('<input type="text" value="2" name="x0"></p>')
 
     out.append('<input type="submit" value="Submit">\n')
     out.append('</form>\n\n')
 
     try:
-        orderNr = int(request.args.get('order', ''))
+        n = int(request.args.get('order', ''))
+        
+        #Check if int
+        int(request.args.get('x0', ''))
+        
+        # But I need a string later
+        x00 = request.args.get('x0', '')
+
+        expression = request.args.get('expression', '')
+
+        # DDOS protection
+        if n > 15:
+            n = 15
     except:
         return hp.HEAD + ''.join(out) + hp.TAIL
 
     out.append("<hr>\n")
-    out.append("Order choosen: " + str(orderNr))
+    out.append("Order choosen: " + str(n))
+    
+    #expression = "sin(x)*cos(x)"
 
-    # Plot range
-    xmin = -4 * np.pi
-    xmax = 4 * np.pi
+    rangeX = 4 # willkuerlich festgelegt
 
-    plt.figure(figsize=(8, 6))  # figsize=(19.20,10.80)
-    x = np.linspace(-4 * np.pi, 4 * np.pi, 200)
-    yTaylor = np.zeros(len(x))
-    ySin = np.sin(x)
+    expr = sp.parse_expr(expression)
+    #x00 = "4"
+    x0 = sp.parse_expr(x00)
+    n = 11
 
-    # Approximation
-    sign = -1
-    for i in range(0, orderNr + 1):
-        if (i % 2 == 0):
-            continue
-        else:
-            sign *= -1
-            yTaylor += sign * x ** i / np.math.factorial(i)
+    x = sp.symbols('x')
 
-    plt.plot(x, ySin, 'b', x, yTaylor, 'r')
-    plt.axis((xmin, xmax, -4, 4))
+    # Generiere "leeres" Sympy object (geht das besser?)
+    temp = sp.sqrt(0)
+
+    for i in range(0,n):
+        e1 = sp.diff(expr, "x", i)
+        temp += e1.subs(x, x0) / sp.factorial(i) * (x-x0)**i
+
+    asciiForm = sp.pretty(temp)
+
+    #expr = expr.subs(x, x-x0)
+
+    f0 = sp.lambdify(x, expr, "numpy")
+    f1 = sp.lambdify(x, temp, "numpy")
+
+    xValues = numpy.linspace(float(x00)-rangeX, float(x00)+rangeX, 1000)
+    yValues0 = f0(xValues)
+    yValues1 = f1(xValues)
+
+    plt.clf()
+    plt.plot(xValues, yValues0, 'b', xValues, yValues1, 'r')
+    plt.axis((float(x00)-rangeX, float(x00)+rangeX, -4, 4))  # y range durch max Werte der Funktion ersetzen...
     plt.grid(True)
+    
+    #plt.show()
 
-    # plt.show()
     plt.savefig("plots/" + session['username'] + '.png')
 
-    out.append('<img src="plot/' + session['username'] + '.png" alt="Sin Taylor">\n')
+    out.append('<img src="plot/' + session['username'] + '.png" alt="Sin">\n')
 
+    out.append('<h2>Formel</h2>\n')
+    out.append('<pre><br>' + asciiForm + '<br></pre>\n')
+    
     return hp.HEAD + ''.join(out) + hp.TAIL
+
+
+
 
 
 @app.route('/plot3d')
 def plot3d():
-    if not sessionValid():
+    if not hp.sessionValid(session):
         return hp.HEAD + 'Not logged in. Go <a href="/">back</a>' + hp.TAIL
 
     out = []

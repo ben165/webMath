@@ -1,3 +1,5 @@
 plots/*
+.idea/
 test.py
 __pycache__
+b.py
