@@ -11,16 +11,17 @@ HEAD = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0;" />
 <style>
 html {
-  max-width: 70ch;
-  padding: 3em 1em;
-  margin: auto;
   line-height: 1.75;
   font-size: 1.25em;
-}
+  max-width: 70ch;
+  padding: 3em 1em;
+  margin: auto;}
 </style>
 </head>
 <body>
 """
+
+
 
 TAIL = "</body></html"
 
@@ -36,12 +37,9 @@ pwTable = {
 
 
 def sessionValid(session):
-    try:
-        if session['username'] and ('username' in session):
-            return True
-        return False
-    except:
-        False
+    if 'username' in session:
+        return True
+    return False
 
 
 def createHash(str1, user):

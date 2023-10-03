@@ -89,7 +89,7 @@ def login():
 
 @app.route('/doLogout')
 def doLogout():
-    session["username"] = None
+    session.pop('username', None)
     return hp.HEAD + 'Logout complete. Go <a href="/">back</a>.' + hp.TAIL
 
 
@@ -204,7 +204,7 @@ def taylor():
         return hp.HEAD + ''.join(out) + hp.TAIL
 
     out.append("<hr>\n")
-    out.append("Order choosen: " + str(n))
+    out.append("<p>Order choosen: " + str(n) + "</p>\n")
     
     #expression = "sin(x)*cos(x)"
 
@@ -231,7 +231,7 @@ def taylor():
     f0 = sp.lambdify(x, expr, "numpy")
     f1 = sp.lambdify(x, temp, "numpy")
 
-    xValues = numpy.linspace(float(x00)-rangeX, float(x00)+rangeX, 1000)
+    xValues = numpy.linspace(float(x00)-rangeX, float(x00)+rangeX, 100)
     yValues0 = f0(xValues)
     yValues1 = f1(xValues)
 
@@ -248,9 +248,30 @@ def taylor():
 
     out.append('<h2>Formel</h2>\n')
     out.append('<pre><br>' + asciiForm + '<br></pre>\n')
-    
+
+
+    # JSON object return
+    try:
+        if request.args.get('json', '') == "1":
+            json = {
+                "x": list(xValues),
+                "y0": list(yValues0),
+                "y1": list(yValues1)
+            }
+            return json
+    except:
+        pass
+
+
+    # Standard return
     return hp.HEAD + ''.join(out) + hp.TAIL
 
+
+
+
+@app.route("/taylorJS")
+def taylorJS():
+    pass
 
 
 
