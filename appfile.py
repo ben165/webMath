@@ -276,7 +276,7 @@ def taylorJS():
     out.append("""<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>\n
                
                <script>
-               fetch("http://127.0.0.1:8080/taylor?order=5&expression=sin(x)*cos(x)&x0=2&json=1")
+               fetch("/taylor?order=5&expression=sin(x)*cos(x)&x0=2&json=1")
                     .then((response) => response.json())
                     .then((json) => plot1(json));
                </script>
