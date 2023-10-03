@@ -22,8 +22,7 @@ html {
 """
 
 
-
-TAIL = "</body></html"
+TAIL = "</body></html>"
 
 hashTable = {
     "jakob": "rP+P6LOUG8iDWLZ44L9P10Psj",

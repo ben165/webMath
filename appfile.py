@@ -271,9 +271,51 @@ def taylor():
 
 @app.route("/taylorJS")
 def taylorJS():
-    pass
+    out = []
+
+    out.append("""<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>\n
+               
+               <script>
+               fetch("http://127.0.0.1:8080/taylor?order=5&expression=sin(x)*cos(x)&x0=2&json=1")
+                    .then((response) => response.json())
+                    .then((json) => plot1(json));
+               </script>
+
+                <div>
+                    <canvas id="myChart"></canvas>
+                </div>
+
+<script>
 
 
+function plot1(json){
+  const ctx = document.getElementById('myChart');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: json.x,//['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      datasets: [{
+        label: '# of Votes',
+        data: json.y0, //[12, 19, 3, 5, 2, 3],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+</script>
+
+""")
+
+    out.append('\n')
+
+    return hp.HEAD + ''.join(out) + hp.TAIL
 
 
 @app.route('/plot3d')
