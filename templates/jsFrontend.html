@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}ChartJS{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  function calculate(){
+    if (myChart != null) {
+      myChart.destroy
+    }
+    expr = document.getElementById("expr").value
+    x0 = document.getElementById("x0").value
+    order = document.getElementById("order").value
+    console.log(order)
+    fetch("/taylor?order="+ order +"&expression="+ expr +"&x0="+ x0 +"&json=1")
+      .then((response) => response.json())
+      .then((json) => plot1(json));
+  }
+</script>
+
+<h2>Expression input</h2>
+
+<p>
+  Expression: 
+  <input type="text" id="expr"> ( sin(x) )
+</p>
+<p>
+  x0: 
+  <input type="text" id="x0"> (1)
+</p>
+<p>
+  order: 
+  <input type="text" id="order"> (2)
+</p>
+<p>
+  <button type="button" onclick="calculate()">Submit</button>
+</p>
+
+
+
+<div>
+  <canvas id="myChart"></canvas>
+</div>
+
+<script>
+function plot1(json){
+  const ctx = document.getElementById('myChart');
+
+  var myChart = new Chart(ctx, {
+    type: 'line',
+
+    data: {
+      labels: json.x.map(x => Math.round(x*100)/100),
+      datasets: [{
+        label: 'Orginal',
+        data: json.y0,
+        borderWidth: 1
+      },
+      {
+        label: 'Approximation',
+        data: json.y1,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          min: -2,
+          max: 2,
+        }
+      }
+    }
+  });
+  setTimeout(myChart.destroy, 4000)
+}
+</script>
+
+{% endblock %}

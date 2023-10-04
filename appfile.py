@@ -4,7 +4,7 @@
 import io
 
 # Flask stuff
-from flask import Flask, request, session
+from flask import Flask, request, session, render_template
 
 # Math Stuff
 import matplotlib
@@ -58,7 +58,8 @@ def index():
 
     out.append('<h2>Options</h2>\n')
     out.append('<ul>\n')
-    out.append('<li><a href="taylor">Taylor Beispiel</a></li>\n')
+    out.append('<li><a href="taylor">Taylor Beispiel Backend</a></li>\n')
+    out.append('<li><a href="taylorJS">Taylor Beispiel Frontend + Backend</a></li>\n')
     out.append('<li><a href="plot3d">3D Plot</a></li>\n')
     out.append('</ul>\n')
 
@@ -171,17 +172,14 @@ def taylor():
     out.append('<form action="taylor" method="get">\n')
     out.append('<select id="order" name="order">\n')
     for i in range(1, 16):
-        if i != 5:
-           out.append('<option value="' + str(i) + '">' + str(i) + '</option>\n')
-        else:
-            out.append('<option selected value="' + str(i) + '">' + str(i) + '</option>\n')
+        out.append('<option value="' + str(i) + '">' + str(i) + '</option>\n')
     out.append('</select></p>\n')
 
     out.append('<p>Expression: \n')
-    out.append('<input type="text" value="sin(x)*cos(x)" name="expression"></p>')
+    out.append('<input type="text" name="expression"></p>')
 
     out.append('<p>x0 position: \n')
-    out.append('<input type="text" value="2" name="x0"></p>')
+    out.append('<input type="text" name="x0"></p>')
 
     out.append('<input type="submit" value="Submit">\n')
     out.append('</form>\n\n')
@@ -213,27 +211,33 @@ def taylor():
     expr = sp.parse_expr(expression)
     #x00 = "4"
     x0 = sp.parse_expr(x00)
-    n = 11
 
     x = sp.symbols('x')
 
     # Generiere "leeres" Sympy object (geht das besser?)
     temp = sp.sqrt(0)
 
-    for i in range(0,n):
+    print("n: ", n)
+    for i in range(0, n+1):
         e1 = sp.diff(expr, "x", i)
         temp += e1.subs(x, x0) / sp.factorial(i) * (x-x0)**i
 
     asciiForm = sp.pretty(temp)
+    
+    print("HHHHHHHHHHHHHHHHH")
+    sp.pprint(temp)
 
     #expr = expr.subs(x, x-x0)
 
     f0 = sp.lambdify(x, expr, "numpy")
     f1 = sp.lambdify(x, temp, "numpy")
 
-    xValues = numpy.linspace(float(x00)-rangeX, float(x00)+rangeX, 100)
+    xValues = numpy.linspace(float(x00)-rangeX, float(x00)+rangeX, 10)
+    print("x:  ", xValues)
     yValues0 = f0(xValues)
+    print("y0: ", yValues0)
     yValues1 = f1(xValues)
+    print("y1: ", yValues1)
 
     plt.clf()
     plt.plot(xValues, yValues0, 'b', xValues, yValues1, 'r')
@@ -271,51 +275,7 @@ def taylor():
 
 @app.route("/taylorJS")
 def taylorJS():
-    out = []
-
-    out.append("""<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>\n
-               
-               <script>
-               fetch("/taylor?order=5&expression=sin(x)*cos(x)&x0=2&json=1")
-                    .then((response) => response.json())
-                    .then((json) => plot1(json));
-               </script>
-
-                <div>
-                    <canvas id="myChart"></canvas>
-                </div>
-
-<script>
-
-
-function plot1(json){
-  const ctx = document.getElementById('myChart');
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: json.x,//['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [{
-        label: '# of Votes',
-        data: json.y0, //[12, 19, 3, 5, 2, 3],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-}
-</script>
-
-""")
-
-    out.append('\n')
-
-    return hp.HEAD + ''.join(out) + hp.TAIL
+    return render_template('jsFrontend.html')
 
 
 @app.route('/plot3d')
