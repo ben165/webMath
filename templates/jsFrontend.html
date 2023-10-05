@@ -8,9 +8,6 @@
 
 <script>
   function calculate(){
-    if (myChart != null) {
-      myChart.destroy
-    }
     expr = document.getElementById("expr").value
     x0 = document.getElementById("x0").value
     order = document.getElementById("order").value
@@ -20,6 +17,8 @@
       .then((json) => plot1(json));
   }
 </script>
+
+<p><a href="/">Back</a></p>
 
 <h2>Expression input</h2>
 
@@ -49,7 +48,7 @@
 function plot1(json){
   const ctx = document.getElementById('myChart');
 
-  var myChart = new Chart(ctx, {
+  var benjamin = new Chart(ctx, {
     type: 'line',
 
     data: {

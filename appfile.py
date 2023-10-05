@@ -232,7 +232,7 @@ def taylor():
     f0 = sp.lambdify(x, expr, "numpy")
     f1 = sp.lambdify(x, temp, "numpy")
 
-    xValues = numpy.linspace(float(x00)-rangeX, float(x00)+rangeX, 10)
+    xValues = numpy.linspace(float(x00)-rangeX, float(x00)+rangeX, 100)
     print("x:  ", xValues)
     yValues0 = f0(xValues)
     print("y0: ", yValues0)
