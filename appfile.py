@@ -162,7 +162,7 @@ def taylor():
 
     asciiForm = sp.pretty(temp)
     
-    sp.pprint(temp)
+    #sp.pprint(temp)
 
     #expr = expr.subs(x, x-x0)
 

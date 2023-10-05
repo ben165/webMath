@@ -53,9 +53,9 @@ function plot1(json){
   const ctx = document.getElementById('myChart');
 
   if (benjamin != null) {
-    console.log("update")
-    benjamin.data.datasets[0].data = json.y0;
-    benjamin.data.datasets[1].data = json.y1;
+    benjamin.data.datasets[0].data = json.y1;
+    benjamin.data.datasets[1].data = json.y0;
+    benjamin.data.labels = json.x.map(x => Math.round(x*100)/100);
     benjamin.update()
   }
   else {
@@ -65,13 +65,13 @@ function plot1(json){
       data: {
         labels: json.x.map(x => Math.round(x*100)/100),
         datasets: [{
-          label: 'Orginal',
-          data: json.y0,
+          label: 'Approximation',
+          data: json.y1,
           borderWidth: 1
         },
         {
-          label: 'Approximation',
-          data: json.y1,
+          label: 'Orginal',
+          data: json.y0,
           borderWidth: 1
         }]
       },
