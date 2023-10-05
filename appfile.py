@@ -133,9 +133,9 @@ def taylor():
 
         expression = request.args.get('expression', '')
 
-        # DDOS protection
-        if n > 15:
-            n = 15
+        # Input protection
+        if (n > 15 or n < 1):
+            n = 5
     except:
         return hp.HEAD + ''.join(out) + hp.TAIL
 
@@ -162,7 +162,6 @@ def taylor():
 
     asciiForm = sp.pretty(temp)
     
-    print("HHHHHHHHHHHHHHHHH")
     sp.pprint(temp)
 
     #expr = expr.subs(x, x-x0)
@@ -171,11 +170,8 @@ def taylor():
     f1 = sp.lambdify(x, temp, "numpy")
 
     xValues = numpy.linspace(float(x00)-rangeX, float(x00)+rangeX, 100)
-    print("x:  ", xValues)
     yValues0 = f0(xValues)
-    print("y0: ", yValues0)
     yValues1 = f1(xValues)
-    print("y1: ", yValues1)
 
     plt.clf()
     plt.plot(xValues, yValues0, 'b', xValues, yValues1, 'r')
