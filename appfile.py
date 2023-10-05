@@ -94,68 +94,6 @@ def doLogout():
     return hp.HEAD + 'Logout complete. Go <a href="/">back</a>.' + hp.TAIL
 
 
-# Old approach
-#@app.route("/taylor")
-#def taylor():
-#    if not hp.sessionValid(session):
-#        return hp.HEAD + 'Not logged in. Go <a href="/">back</a>' + hp.TAIL
-#
-#    out = []
-#
-#    out.append('<p><a href="/">Back</a></p>\n')
-#
-#    out.append('<h2>Taylor example</h2>\n')
-#
-#    out.append('Taylor Approximations of <b>sin(x)</b> as position x=0\n')
-#
-#    out.append('<form action="taylor" method="get">\n')
-#    out.append('<select id="order" name="order">\n')
-#    for i in range(1, 11):
-#        out.append('<option value="' + str(i) + '">' + str(i) + '</option>\n')
-#    out.append('</select></p>\n')
-#
-#    out.append('<input type="submit" value="Submit">\n')
-#    out.append('</form>\n\n')
-#
-#    try:
-#        orderNr = int(request.args.get('order', ''))
-#    except:
-#        return hp.HEAD + ''.join(out) + hp.TAIL
-#
-#    out.append("<hr>\n")
-#    out.append("Order choosen: " + str(orderNr))
-#
-#    # Plot range
-#    xmin = -4 * np.pi
-#    xmax = 4 * np.pi
-#
-#    plt.figure(figsize=(8, 6))  # figsize=(19.20,10.80)
-#    x = np.linspace(-4 * np.pi, 4 * np.pi, 200)
-#    yTaylor = np.zeros(len(x))
-#    ySin = np.sin(x)
-#
-#    # Approximation
-#    sign = -1
-#    for i in range(0, orderNr + 1):
-#        if (i % 2 == 0):
-#            continue
-#        else:
-#            sign *= -1
-#            yTaylor += sign * x ** i / np.math.factorial(i)
-#
-#    plt.plot(x, ySin, 'b', x, yTaylor, 'r')
-#    plt.axis((xmin, xmax, -4, 4))
-#    plt.grid(True)
-#
-#    # plt.show()
-#    plt.savefig("plots/" + session['username'] + '.png')
-#
-#    out.append('<img src="plot/' + session['username'] + '.png" alt="Sin Taylor">\n')
-#
-#    return hp.HEAD + ''.join(out) + hp.TAIL
-
-
-
 @app.route("/taylor")
 def taylor():
     if not hp.sessionValid(session):
