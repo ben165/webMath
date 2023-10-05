@@ -7,6 +7,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+  if (typeof benjamin !== 'undefined') {
+    var benjamin = null;
+  }
+
   function calculate(){
     expr = document.getElementById("expr").value
     x0 = document.getElementById("x0").value
@@ -48,32 +52,40 @@
 function plot1(json){
   const ctx = document.getElementById('myChart');
 
-  var benjamin = new Chart(ctx, {
-    type: 'line',
+  if (benjamin != null) {
+    console.log("update")
+    benjamin.data.datasets[0].data = json.y0;
+    benjamin.data.datasets[1].data = json.y1;
+    benjamin.update()
+  }
+  else {
+    benjamin = new Chart(ctx, {
+      type: 'line',
 
-    data: {
-      labels: json.x.map(x => Math.round(x*100)/100),
-      datasets: [{
-        label: 'Orginal',
-        data: json.y0,
-        borderWidth: 1
+      data: {
+        labels: json.x.map(x => Math.round(x*100)/100),
+        datasets: [{
+          label: 'Orginal',
+          data: json.y0,
+          borderWidth: 1
+        },
+        {
+          label: 'Approximation',
+          data: json.y1,
+          borderWidth: 1
+        }]
       },
-      {
-        label: 'Approximation',
-        data: json.y1,
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          min: -2,
-          max: 2,
+      options: {
+        scales: {
+          y: {
+            min: -2,
+            max: 2,
+          }
         }
       }
     }
-  });
-  setTimeout(myChart.destroy, 4000)
+  );
+  }
 }
 </script>
 
