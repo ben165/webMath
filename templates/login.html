@@ -8,7 +8,7 @@
 
 {% if not valid %}
 
-<h3>Login</h3>
+<h2>Login</h2>
   <form action="doLogin" method="post">
   <p>Username:<br />
   <select id="username" name="username">
@@ -29,7 +29,7 @@
 Logged in as {{ session["username"] }}
 (<a href="doLogout">Logout</a>)
 
-<h2>Options</h2>
+<h3>Options</h3>
 <ul>
 <li><a href="taylor">Taylor Beispiel Backend</a></li>
 <li><a href="taylorJS">Taylor Beispiel Frontend + Backend</a></li>
