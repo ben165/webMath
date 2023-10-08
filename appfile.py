@@ -31,39 +31,7 @@ app.secret_key = b'DFkCwsJVaWc1YpP+SA5hSYLpRP0='
 
 @app.route("/")
 def index():
-    out = []
-    out.append("<h2>Welcome</h2>")
-    out.append("<p>")
-
-    if not hp.sessionValid(session):
-        out.append('<h3>Login</h3>\n')
-        out.append('<form action="doLogin" method="post">\n')
-        out.append('<p>Username:<br />\n')
-
-        out.append('<select id="username" name="username">\n')
-        out.append('<option value="jakob">jakob</option>\n')
-        out.append('<option value="benjamin">benjamin</option>\n')
-        out.append('</select></p>\n')
-
-        out.append('<p>Password:<br />\n')
-        out.append('<input type="password" name="password"></p>\n')
-        out.append('<input type="submit" value="Submit">\n')
-        out.append('</form>')
-        out.append("</p>")
-        return hp.HEAD + "".join(out) + hp.TAIL
-
-    out.append("Logged in as " + session["username"])
-    out.append(' (<a href="doLogout">Logout</a>)\n')
-    out.append('</p>\n')
-
-    out.append('<h2>Options</h2>\n')
-    out.append('<ul>\n')
-    out.append('<li><a href="taylor">Taylor Beispiel Backend</a></li>\n')
-    out.append('<li><a href="taylorJS">Taylor Beispiel Frontend + Backend</a></li>\n')
-    out.append('<li><a href="plot3d">3D Plot</a></li>\n')
-    out.append('</ul>\n')
-
-    return hp.HEAD + "".join(out) + hp.TAIL
+    return render_template('login.html', session=session, valid=hp.sessionValid(session))
 
 
 @app.route('/doLogin', methods=['POST'])
@@ -71,27 +39,24 @@ def login():
     out = []
 
     if request.method != 'POST':
-        return 'method	wrong'
+        return 'method wrong'
 
+    # get form data
     password = request.form['password']
     username = request.form['username']
-    hashed = hp.createHash(password, username)
-    print(hashed)
 
-    if (hashed == hp.getPw(username)):
+    # check login data
+    if ( hp.checkLogin(password, username) ):
         session["username"] = username
-        out.append('<p>Login successful. Welcome back <b>' + username + '</b>.</p>\n')
-        out.append('<p>Back to <a href="/">main</a>.</p>\n')
+        return render_template('status.html', status="Login successful.")
     else:
-        out.append('Login failed (Wrong password?). <br /><a href="/">Go back</a>.\n')
-
-    return hp.HEAD + "".join(out) + hp.TAIL
+        return render_template('status.html', status="Login failed.")
 
 
 @app.route('/doLogout')
 def doLogout():
     session.pop('username', None)
-    return hp.HEAD + 'Logout complete. Go <a href="/">back</a>.' + hp.TAIL
+    return render_template('status.html', status="Logout successful.")
 
 
 @app.route("/taylor")

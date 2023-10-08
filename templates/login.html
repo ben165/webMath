@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Startpage{% endblock %}
+
+{% block content %}
+
+<h2>Welcome</h2>
+
+{% if not valid %}
+
+<h3>Login</h3>
+  <form action="doLogin" method="post">
+  <p>Username:<br />
+  <select id="username" name="username">
+    <option value="jakob">jakob</option>
+    <option value="benjamin">benjamin</option>
+    <option value="hacker">hacker</option>
+  </select>
+  </p>
+
+  <p>Password:<br />
+    <input type="password" name="password">
+  </p>
+  <input type="submit" value="Submit">
+  </form>
+
+{% else %}
+
+Logged in as {{ session["username"] }}
+(<a href="doLogout">Logout</a>)
+
+<h2>Options</h2>
+<ul>
+<li><a href="taylor">Taylor Beispiel Backend</a></li>
+<li><a href="taylorJS">Taylor Beispiel Frontend + Backend</a></li>
+<li><a href="plot3d">3D Plot</a></li>
+</ul>
+
+
+{% endif %}
+
+
+
+{% endblock %}

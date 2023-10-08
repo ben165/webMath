@@ -21,8 +21,8 @@ html {
 <body>
 """
 
-
 TAIL = "</body></html>"
+
 
 hashTable = {
     "jakob": "rP+P6LOUG8iDWLZ44L9P10Psj",
@@ -35,25 +35,28 @@ pwTable = {
 }
 
 
-def sessionValid(session):
-    if 'username' in session:
+def checkLogin(pw, user):
+
+    if len(pw) < 1 or len(user) < 1:
+        return False
+
+    try:
+        hashTable[user]
+    except:
+        return False
+    
+    pw = pw + hashTable[user]
+    
+    m = hashlib.sha256()
+    m.update(pw.encode('utf-8'))
+
+    if  (m.hexdigest() == pwTable[user]):
         return True
     return False
 
 
-def createHash(str1, user):
-    try:
-        hashTable[user]
-    except:
-        return "0000000000000000000000000000000"  # value cant be created. Login will fail.
-    str1 += hashTable[user]
-    m = hashlib.sha256()
-    m.update(str1.encode('utf-8'))
-    return m.hexdigest()
 
-
-def getPw(user):
-    try:
-        return pwTable[user]
-    except:
-        return "0000000000000000000000000000001"  # value cant be created. Login will fail.
+def sessionValid(session):
+    if 'username' in session:
+        return True
+    return False
