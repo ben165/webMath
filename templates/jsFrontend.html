@@ -7,8 +7,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  if (typeof benjamin !== 'undefined') {
-    var benjamin = null;
+  if (typeof taylorChart !== 'undefined') {
+    var taylorChart = null;
   }
 
   function calculate(){
@@ -56,14 +56,14 @@
 function plot1(json){
   const ctx = document.getElementById('myChart');
 
-  if (benjamin != null) {
-    benjamin.data.datasets[0].data = json.y1;
-    benjamin.data.datasets[1].data = json.y0;
-    benjamin.data.labels = json.x.map(x => Math.round(x*100)/100);
-    benjamin.update()
+  if (taylorChart != null) {
+    taylorChart.data.datasets[0].data = json.y1;
+    taylorChart.data.datasets[1].data = json.y0;
+    taylorChart.data.labels = json.x.map(x => Math.round(x*100)/100);
+    taylorChart.update()
   }
   else {
-    benjamin = new Chart(ctx, {
+    taylorChart = new Chart(ctx, {
       type: 'line',
 
       data: {
@@ -82,8 +82,8 @@ function plot1(json){
       options: {
         scales: {
           y: {
-            min: -2,
-            max: 2,
+            min: -3,
+            max: 3,
           }
         }
       }

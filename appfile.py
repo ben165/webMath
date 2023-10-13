@@ -41,11 +41,11 @@ def login():
     if request.method != 'POST':
         return 'method wrong'
 
-    # get form data
+    # Get form data (POST)
     password = request.form['password']
     username = request.form['username']
 
-    # check login data
+    # Check data for setting session cookie
     if ( hp.checkLogin(password, username) ):
         session["username"] = username
         return render_template('status.html', status="Login successful.")
@@ -62,75 +62,39 @@ def doLogout():
 @app.route("/taylor")
 def taylor():
     if not hp.sessionValid(session):
-        return hp.HEAD + 'Not logged in. Go <a href="/">back</a>' + hp.TAIL
+        return render_template('status.html', status="Not logged in.")
 
-    out = []
-
-    out.append('<p><a href="/">Back</a></p>\n')
-
-    out.append('<h2>Taylor example 2</h2>\n')
-
-    out.append('Taylor Approximations\n')
-
-    out.append('<form action="taylor" method="get">\n')
-    out.append('<select id="order" name="order">\n')
-    for i in range(1, 16):
-        out.append('<option value="' + str(i) + '">' + str(i) + '</option>\n')
-    out.append('</select></p>\n')
-
-    out.append('<p>Expression: \n')
-    out.append('<input type="text" name="expression"></p>')
-
-    out.append('<p>x0 position: \n')
-    out.append('<input type="text" name="x0"></p>')
-
-    out.append('<input type="submit" value="Submit">\n')
-    out.append('</form>\n\n')
 
     try:
         n = int(request.args.get('order', ''))
         
-        #Check if int
-        int(request.args.get('x0', ''))
+        # Check if int and convert it into str
+        x00 = str(int(request.args.get('x0', '')))
         
-        # But I need a string later
-        x00 = request.args.get('x0', '')
-
+        # Get formula
         expression = request.args.get('expression', '')
 
         # Input protection
         if (n > 15 or n < 1):
             n = 5
     except:
-        return hp.HEAD + ''.join(out) + hp.TAIL
-
-    out.append("<hr>\n")
-    out.append("<p>Order choosen: " + str(n) + "</p>\n")
+        return render_template('taylor.html', picture="", x0="", exp="", exprPretty="", formula="")
     
-    #expression = "sin(x)*cos(x)"
-
-    rangeX = 4 # willkuerlich festgelegt
+    rangeX = 4  # xrange = [-4, 4]
 
     expr = sp.parse_expr(expression)
-    #x00 = "4"
     x0 = sp.parse_expr(x00)
-
     x = sp.symbols('x')
 
-    # Generiere "leeres" Sympy object (geht das besser?)
+    # Generiere "leeres" Sympy object
     temp = sp.sqrt(0)
 
-    print("n: ", n)
     for i in range(0, n+1):
         e1 = sp.diff(expr, "x", i)
         temp += e1.subs(x, x0) / sp.factorial(i) * (x-x0)**i
 
     asciiForm = sp.pretty(temp)
     
-    #sp.pprint(temp)
-
-    #expr = expr.subs(x, x-x0)
-
     f0 = sp.lambdify(x, expr, "numpy")
     f1 = sp.lambdify(x, temp, "numpy")
 
@@ -140,20 +104,12 @@ def taylor():
 
     plt.clf()
     plt.plot(xValues, yValues0, 'b', xValues, yValues1, 'r')
-    plt.axis((float(x00)-rangeX, float(x00)+rangeX, -4, 4))  # y range durch max Werte der Funktion ersetzen...
+    plt.axis((float(x00)-rangeX, float(x00)+rangeX, -4, 4))
     plt.grid(True)
     
-    #plt.show()
-
-    plt.savefig("plots/" + session['username'] + '.png')
-
-    out.append('<img src="plot/' + session['username'] + '.png" alt="Sin">\n')
-
-    out.append('<h2>Formel</h2>\n')
-    out.append('<pre><br>' + asciiForm + '<br></pre>\n')
 
 
-    # JSON object return
+    # JSON response
     try:
         if request.args.get('json', '') == "1":
             json = {
@@ -166,14 +122,21 @@ def taylor():
         pass
 
 
-    # Standard return
-    return hp.HEAD + ''.join(out) + hp.TAIL
+    # Normal response (pure backend)
+    address = 'plots/' + session['username'] + '.png'
+    plt.savefig(address)
+
+    return render_template('taylor.html', picture=address, x0=x0, expr=expr, exprPretty=sp.pretty(expr), formula=asciiForm)
+
 
 
 
 
 @app.route("/taylorJS")
 def taylorJS():
+    if not hp.sessionValid(session):
+        return render_template('status.html', status="Not logged in.")
+    
     return render_template('jsFrontend.html')
 
 
@@ -203,25 +166,21 @@ def plot3d():
     x, y = symbols('x y')
     graph = sp.plotting.plot3d(expr, (x, -5, 5), (y, -5, 5), show=False, size=(10, 10))
     graph.save("plots/" + session['username'] + '.png')
-    out.append('<img src="plot/' + session['username'] + '.png">\n')
+    out.append('<img src="plots/' + session['username'] + '.png">\n')
     return hp.HEAD + ''.join(out) + hp.TAIL
 
 
-@app.route('/plot/<picname>')
+@app.route('/plots/<picname>')
 def plots(picname):
     f = open("plots/" + picname, 'rb')
     content = f.read()
     f.close()
 
-    # print(type(content))
-
     return content, {'Content-Type': 'image/png'}
 
 
-# return hp.HEAD + "test" + hp.TAIL
 
-
-@app.route("/test")
+@app.route("/jsonTest")
 def test():
     x = """
 	{
