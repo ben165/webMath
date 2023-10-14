@@ -17,8 +17,6 @@ import numpy
 import sympy as sp
 from sympy import symbols
 from sympy.parsing.sympy_parser import parse_expr
-from sympy.printing.mathml import mathml
-from sympy.plotting.plot import plot3d
 
 # My stuff
 import helper as hp
@@ -26,6 +24,7 @@ import helper as hp
 app = Flask(__name__)
 app.config["SESSION_TYPE"] = "filesystem"
 app.secret_key = b'DFkCwsJVaWc1YpP+SA5hSYLpRP0='
+
 
 @app.route("/")
 def index():
