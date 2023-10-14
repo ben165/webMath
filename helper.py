@@ -3,27 +3,6 @@
 import base64
 import hashlib
 
-HEAD = """<!doctype html>
-<html lang="en">
-<head>
-<title>V 0.1</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0;" />
-<style>
-html {
-  line-height: 1.75;
-  font-size: 1.25em;
-  max-width: 70ch;
-  padding: 3em 1em;
-  margin: auto;}
-</style>
-</head>
-<body>
-"""
-
-TAIL = "</body></html>"
-
-
 hashTable = {
     "jakob": "rP+P6LOUG8iDWLZ44L9P10Psj",
     "benjamin": "SpNJrACJAFUHsEe7Q57tAteMV"

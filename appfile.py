@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 # Very important for thread safety
 matplotlib.use('agg')
 
-
 import numpy
 import sympy as sp
 from sympy import symbols
@@ -27,7 +26,6 @@ import helper as hp
 app = Flask(__name__)
 app.config["SESSION_TYPE"] = "filesystem"
 app.secret_key = b'DFkCwsJVaWc1YpP+SA5hSYLpRP0='
-
 
 @app.route("/")
 def index():
@@ -46,7 +44,7 @@ def login():
     username = request.form['username']
 
     # Check data for setting session cookie
-    if ( hp.checkLogin(password, username) ):
+    if (hp.checkLogin(password, username)):
         session["username"] = username
         return render_template('status.html', status="Login successful.")
     else:
@@ -64,13 +62,12 @@ def taylor():
     if not hp.sessionValid(session):
         return render_template('status.html', status="Not logged in.")
 
-
     try:
         n = int(request.args.get('order', ''))
-        
+
         # Check if int and convert it into str
         x00 = str(int(request.args.get('x0', '')))
-        
+
         # Get formula
         expression = request.args.get('expression', '')
 
@@ -79,7 +76,7 @@ def taylor():
             n = 5
     except:
         return render_template('taylor.html', picture="", x0="", exp="", exprPretty="", formula="")
-    
+
     rangeX = 4  # xrange = [-4, 4]
 
     expr = sp.parse_expr(expression)
@@ -89,25 +86,23 @@ def taylor():
     # Generiere "leeres" Sympy object
     temp = sp.sqrt(0)
 
-    for i in range(0, n+1):
+    for i in range(0, n + 1):
         e1 = sp.diff(expr, "x", i)
-        temp += e1.subs(x, x0) / sp.factorial(i) * (x-x0)**i
+        temp += e1.subs(x, x0) / sp.factorial(i) * (x - x0) ** i
 
     asciiForm = sp.pretty(temp)
-    
+
     f0 = sp.lambdify(x, expr, "numpy")
     f1 = sp.lambdify(x, temp, "numpy")
 
-    xValues = numpy.linspace(float(x00)-rangeX, float(x00)+rangeX, 100)
+    xValues = numpy.linspace(float(x00) - rangeX, float(x00) + rangeX, 100)
     yValues0 = f0(xValues)
     yValues1 = f1(xValues)
 
     plt.clf()
     plt.plot(xValues, yValues0, 'b', xValues, yValues1, 'r')
-    plt.axis((float(x00)-rangeX, float(x00)+rangeX, -4, 4))
+    plt.axis((float(x00) - rangeX, float(x00) + rangeX, -4, 4))
     plt.grid(True)
-    
-
 
     # JSON response
     try:
@@ -121,53 +116,36 @@ def taylor():
     except:
         pass
 
-
     # Normal response (pure backend)
     address = 'plots/' + session['username'] + '.png'
     plt.savefig(address)
 
-    return render_template('taylor.html', picture=address, x0=x0, expr=expr, exprPretty=sp.pretty(expr), formula=asciiForm)
-
-
-
+    return render_template('taylor.html', picture=address, x0=x0, expr=expr, exprPretty=sp.pretty(expr),
+                           formula=asciiForm)
 
 
 @app.route("/taylorJS")
 def taylorJS():
     if not hp.sessionValid(session):
         return render_template('status.html', status="Not logged in.")
-    
+
     return render_template('jsFrontend.html')
 
 
 @app.route('/plot3d')
 def plot3d():
     if not hp.sessionValid(session):
-        return hp.HEAD + 'Not logged in. Go <a href="/">back</a>' + hp.TAIL
-
-    out = []
-    out.append('<p><a href="/">Back</a></p>\n')
-    out.append('<h2>3D plot</h2>\n')
-    out.append('Enter sympy expression in x and y (example: sin(x)*(x**2+y**2)):\n')
-
-    out.append('<form action="plot3d" method="get">\n')
-    out.append('<input type="text" id="expression" name="expression"></p>')
-    out.append('<input type="submit" value="Submit">\n')
-    out.append('</form>\n\n')
-
+        return render_template('status.html', status="Not logged in.")
+    expression = ""
     try:
         expression = request.args.get('expression', '')
         expr = parse_expr(expression)
-        s = mathml(expr, printer="presentation")
-        out.append('<math>' + s + '</math>')
+        x, y = symbols('x y')
+        graph = sp.plotting.plot3d(expr, (x, -5, 5), (y, -5, 5), show=False, size=(10, 10))
+        graph.save("plots/" + session['username'] + '.png')
+        return render_template('plot3d.html', expression=expression, image_scr="plots/" + session['username'] + ".png")
     except:
-        out.append('<p>Invalid sympy expression</p>')
-        return hp.HEAD + ''.join(out) + hp.TAIL
-    x, y = symbols('x y')
-    graph = sp.plotting.plot3d(expr, (x, -5, 5), (y, -5, 5), show=False, size=(10, 10))
-    graph.save("plots/" + session['username'] + '.png')
-    out.append('<img src="plots/' + session['username'] + '.png">\n')
-    return hp.HEAD + ''.join(out) + hp.TAIL
+        return render_template('plot3d.html', expression=expression, image_scr="")
 
 
 @app.route('/plots/<picname>')
@@ -177,7 +155,6 @@ def plots(picname):
     f.close()
 
     return content, {'Content-Type': 'image/png'}
-
 
 
 @app.route("/jsonTest")

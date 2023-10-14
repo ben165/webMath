@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}3D Plot{% endblock %}
+
+{% block content %}
+
+    <p>
+        <a href="/">Go back</a>
+    </p>
+
+    <h2>3D plot</h2>
+    <p>Enter sympy expression in x and y (example: sin(x)*(x**2-y**2)):</p>
+
+    <form action="plot3d" method="get">
+        <input type="text" id="expression" name="expression" value={{ expression }}>
+        <input type="submit" value="Submit">
+    </form>
+
+    {% if image_scr %}
+        <img src={{ image_scr }}>
+    {% else %}
+        <p>Invalid sympy expression</p>
+    {% endif %}
+
+{% endblock %}
