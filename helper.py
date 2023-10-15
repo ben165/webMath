@@ -15,7 +15,6 @@ pwTable = {
 
 
 def checkLogin(pw, user):
-
     if len(pw) < 1 or len(user) < 1:
         return False
 
@@ -23,16 +22,15 @@ def checkLogin(pw, user):
         saltTable[user]
     except:
         return False
-    
+
     pw += saltTable[user]
-    
+
     m = hashlib.sha256()
     m.update(pw.encode('utf-8'))
 
-    if  (m.hexdigest() == pwTable[user]):
+    if (m.hexdigest() == pwTable[user]):
         return True
     return False
-
 
 
 def sessionValid(session):

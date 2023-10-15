@@ -4,36 +4,36 @@
 
 {% block content %}
 
-<p>
-    <a href="/">Go back</a>
-</p>
+    <p>
+        <a href="/">Go back</a>
+    </p>
 
-<h3>Taylor example pure backend</h3>
+    <h3>Taylor example pure backend</h3>
 
-<h4>Taylor setup</h4>
+    <h4>Taylor setup</h4>
 
-<form action="taylor" method="get">
-    <p>Expression: <input type="text" value="{{expr}}" name="expression"></p>
-    <p>Order: <input type="text" value="{{order}}" name="order"></p>
-    <p>x0 position: <input type="text" value="{{x0}}" name="x0"></p>
-    <input type="submit" value="Submit">
-</form>
+    <form action="taylor" method="get">
+        <p>Expression: <input type="text" value="{{ expr }}" name="expression"></p>
+        <p>Order: <input type="text" value="{{ order }}" name="order"></p>
+        <p>x0 position: <input type="text" value="{{ x0 }}" name="x0"></p>
+        <input type="submit" value="Submit">
+    </form>
 
 
 
-<h4>Taylor approximation</h4>
-{% if picture %}
-    <p><img src="{{picture}}" alt="Taylor Approximation"></p>
-{% endif %}
+    <h4>Taylor approximation</h4>
+    {% if picture %}
+        <p><img src="{{ picture }}" alt="Taylor Approximation"></p>
+    {% endif %}
 
-<h4>Original expression</h4>
-<pre>
-{{exprPretty}}
+    <h4>Original expression</h4>
+    <pre>
+{{ exprPretty }}
 </pre>
 
-<h4>Taylor formula</h4>
-<pre>
-{{formula}}
+    <h4>Taylor formula</h4>
+    <pre>
+{{ formula }}
 </pre>
 
 {% endblock %}

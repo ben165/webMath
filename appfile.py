@@ -167,5 +167,21 @@ def test():
     return x, {'Content-Type': 'application/json'}
 
 
+@app.route("/demo/hello")
+def hello():
+    # x = 1 / 0
+    return "<h1>Hello world</h1>"
+
+
+@app.route("/demo/hello/<name>")
+def hello2(name):
+    return f'<h1>Hello {name}</h1>'
+
+
+@app.route("/demo/template/<name>")
+def hello3(name):
+    return render_template("demo.html", var=name)
+
+
 if __name__ == '__main__':
     app.run(host="127.0.0.1", port=8080, debug=True)
