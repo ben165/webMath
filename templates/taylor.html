@@ -13,13 +13,8 @@
 <h4>Taylor setup</h4>
 
 <form action="taylor" method="get">
-    <select name="order">
-        {% for i in range(1, 10) %}
-        <option value="{{i}}">{{i}}</option>
-        {% endfor %}
-    </select>
-
     <p>Expression: <input type="text" value="{{expr}}" name="expression"></p>
+    <p>Order: <input type="text" value="{{order}}" name="order"></p>
     <p>x0 position: <input type="text" value="{{x0}}" name="x0"></p>
     <input type="submit" value="Submit">
 </form>

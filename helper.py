@@ -3,7 +3,7 @@
 import base64
 import hashlib
 
-hashTable = {
+saltTable = {
     "jakob": "rP+P6LOUG8iDWLZ44L9P10Psj",
     "benjamin": "SpNJrACJAFUHsEe7Q57tAteMV"
 }
@@ -20,11 +20,11 @@ def checkLogin(pw, user):
         return False
 
     try:
-        hashTable[user]
+        saltTable[user]
     except:
         return False
     
-    pw = pw + hashTable[user]
+    pw += saltTable[user]
     
     m = hashlib.sha256()
     m.update(pw.encode('utf-8'))

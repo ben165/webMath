@@ -74,7 +74,7 @@ def taylor():
         if (n > 15 or n < 1):
             n = 5
     except:
-        return render_template('taylor.html', picture="", x0="", exp="", exprPretty="", formula="")
+        return render_template('taylor.html', picture="", x0="", exp="", order="", exprPretty="", formula="")
 
     rangeX = 4  # xrange = [-4, 4]
 
@@ -119,7 +119,7 @@ def taylor():
     address = 'plots/' + session['username'] + '.png'
     plt.savefig(address)
 
-    return render_template('taylor.html', picture=address, x0=x0, expr=expr, exprPretty=sp.pretty(expr),
+    return render_template('taylor.html', picture=address, x0=x0, expr=expr, order=str(n), exprPretty=sp.pretty(expr),
                            formula=asciiForm)
 
 

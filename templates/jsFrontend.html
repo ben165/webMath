@@ -26,27 +26,10 @@
 
 <h2>Expression input</h2>
 
-<p>
-  Expression: 
-  <input type="text" id="expr">
-</p>
-<p>
-  x0: 
-  <input type="text" id="x0">
-</p>
-<p>
-  order: 
-  <select id="order" name="order">
-    {% for i in range(1, 10): %}
-      <option value="{{ i }}">{{i}}</option>
-    {% endfor %}
-  </select>
-</p>
-<p>
-  <button type="button" onclick="calculate()">Submit</button>
-</p>
-
-
+<p>Expression: <input type="text" id="expr"></p>
+<p>x0: <input type="text" id="x0"></p>
+<p>order: <input type="text" id="order"></p>
+<p><button type="button" onclick="calculate()">Submit</button></p>
 
 <div>
   <canvas id="myChart"></canvas>
