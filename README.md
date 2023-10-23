@@ -30,7 +30,7 @@ Following Python packages are needed:
 
 Change inside this folder and start
 ```
-python3 appfile.sh
+python3 appfile.py
 ```
 
 Webapp will be hosted at http://127.0.0.1:8080. Password for user `benjamin` and `jakob` is `123`.
