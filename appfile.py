@@ -169,7 +169,7 @@ def test():
 
 @app.route("/demo/hello")
 def hello():
-    # x = 1 / 0
+    x = 1 / 0
     return "<h1>Hello world</h1>"
 
 
